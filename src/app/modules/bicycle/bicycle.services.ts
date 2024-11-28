@@ -38,22 +38,23 @@ const updateBicycleById = async (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateBody: any,
 ): Promise<TBicycle | undefined> => {
-    try {
-        const bicycle = await Bicycle.findById(productId);
+    const bicycle = await Bicycle.findById(productId);
 
-        if (!bicycle)
-            throw new Error(`User with id = ${productId} doesn't exists!`)
-                .stack;
-        else {
-            Object.assign(bicycle, updateBody);
-            const result = await bicycle.save();
-            return result;
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            throw error;
-        }
-    }
+    if (!bicycle)
+        throw new Error(`User with id = ${productId} doesn't exists!`).stack;
+
+    Object.assign(bicycle, updateBody);
+
+    const result = await bicycle.save();
+    return result;
+};
+
+const deleteBicycleById = async (
+    productId: string,
+): Promise<TBicycle | null> => {
+    const result: TBicycle | null = await Bicycle.findByIdAndDelete(productId);
+
+    return result;
 };
 
 export const userService = {
@@ -61,4 +62,5 @@ export const userService = {
     getBicycles,
     getBicyclesById,
     updateBicycleById,
+    deleteBicycleById,
 };

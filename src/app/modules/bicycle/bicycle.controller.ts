@@ -85,9 +85,35 @@ const updateBicycleById = async (
         next(error);
     }
 };
+
+const deleteBicycleById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const { productId } = req.params;
+
+        const result = await userService.deleteBicycleById(productId);
+
+        if (result) {
+            res.status(200).json({
+                message: 'Bicycle deleted successfully',
+                success: true,
+                data: result,
+            });
+        } else {
+            throw new Error('Product Not Found!');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        next(error);
+    }
+};
 export const bicycleController = {
     createBicycle,
     getBicycles,
     getBicycleById,
     updateBicycleById,
+    deleteBicycleById,
 };

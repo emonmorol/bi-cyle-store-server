@@ -7,5 +7,6 @@ bicycleRouter.post('/', bicycleController.createBicycle);
 bicycleRouter.get('/', bicycleController.getBicycles);
 bicycleRouter.get('/:productId', bicycleController.getBicycleById);
 bicycleRouter.put('/:productId', bicycleController.updateBicycleById);
+bicycleRouter.delete('/:productId', bicycleController.deleteBicycleById);
 
 export default bicycleRouter;
