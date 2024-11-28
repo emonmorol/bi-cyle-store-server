@@ -1,6 +1,7 @@
 import Bicycle from './bicycle.model';
 import { TBicycle } from './bicycle.interface';
 import bicycleValidationSchema from './bicycle.zod.validation';
+import { Request } from 'express';
 
 const createBicycle = async (data: TBicycle): Promise<TBicycle> => {
     const zodParsedData = await bicycleValidationSchema.parseAsync(data);

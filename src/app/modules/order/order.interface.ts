@@ -6,3 +6,7 @@ export type TOrder = {
     quantity: number;
     totalPrice: number;
 };
+
+export type TRevenue = {
+    totalRevenue: number;
+};
