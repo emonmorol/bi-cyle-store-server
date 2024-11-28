@@ -7,3 +7,5 @@ export type TBicycle = {
     quantity: number;
     inStock: boolean;
 };
+
+export type QueryParamKey = 'name' | 'brand' | 'type';

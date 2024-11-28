@@ -55,4 +55,7 @@ const bicycleValidationSchema = z.object({
     updatedAt: z.date().optional(),
 });
 
-export default bicycleValidationSchema;
+
+export const zodValidation = {
+    bicycleValidationSchema,
+};
