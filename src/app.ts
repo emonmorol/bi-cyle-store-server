@@ -9,6 +9,9 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
+app.get('/', (req: Request, res: Response) => {
+    res.send('welcome');
+});
 app.use('/api/products', bicycleRouter);
 app.use('/api/orders', orderRouter);
 

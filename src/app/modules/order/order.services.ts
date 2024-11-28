@@ -2,7 +2,7 @@ import Bicycle from '../bicycle/bicycle.model';
 
 import { TOrder, TRevenue } from './order.interface';
 import Order from './order.model';
-import orderValidationSchema from './order.zod.validatin';
+import orderValidationSchema from './order.zod.validation';
 
 const createOrder = async (order: TOrder): Promise<TOrder | null> => {
     const validOrder = await orderValidationSchema.parseAsync(order);
