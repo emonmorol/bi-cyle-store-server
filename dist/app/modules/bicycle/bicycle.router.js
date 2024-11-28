@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const bicycle_controller_1 = require("./bicycle.controller");
+const bicycleRouter = (0, express_1.Router)();
+bicycleRouter.post('/', bicycle_controller_1.bicycleController.createBicycle);
+bicycleRouter.get('/', bicycle_controller_1.bicycleController.getBicycles);
+bicycleRouter.get('/:productId', bicycle_controller_1.bicycleController.getBicycleById);
+bicycleRouter.put('/:productId', bicycle_controller_1.bicycleController.updateBicycleById);
+bicycleRouter.delete('/:productId', bicycle_controller_1.bicycleController.deleteBicycleById);
+exports.default = bicycleRouter;
