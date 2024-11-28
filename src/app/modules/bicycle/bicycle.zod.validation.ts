@@ -49,12 +49,10 @@ const bicycleValidationSchema = z.object({
     inStock: z
         .boolean()
         .or(z.undefined())
-        .transform((val) => (val === undefined ? false : val)),
+        .transform((val) => (val === undefined ? true : val)),
 
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
 });
 
-export const zodValidation = {
-    bicycleValidationSchema,
-};
+export default bicycleValidationSchema;

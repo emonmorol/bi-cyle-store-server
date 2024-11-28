@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
+
 export type TOrder = {
     email: string;
-    product: string;
+    product: mongoose.Types.ObjectId; // Correct type for ObjectId
     quantity: number;
-    totalPrice: boolean;
+    totalPrice: number;
 };

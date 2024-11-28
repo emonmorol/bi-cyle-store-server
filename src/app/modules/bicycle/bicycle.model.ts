@@ -13,7 +13,7 @@ const bicycleSchema: Schema<TBicycle> = new Schema<TBicycle>(
         },
         description: { type: String, required: true, trim: true },
         quantity: { type: Number, required: true, min: 0 },
-        inStock: { type: Boolean, required: true, default: false },
+        inStock: { type: Boolean, required: true, default: true },
     },
     {
         timestamps: true,

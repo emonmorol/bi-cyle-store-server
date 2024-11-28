@@ -1,10 +1,9 @@
 import Bicycle from './bicycle.model';
 import { TBicycle } from './bicycle.interface';
-import { zodValidation } from './bicycle.zod.validation';
+import bicycleValidationSchema from './bicycle.zod.validation';
 
 const createBicycle = async (data: TBicycle): Promise<TBicycle> => {
-    const zodParsedData =
-        await zodValidation.bicycleValidationSchema.parseAsync(data);
+    const zodParsedData = await bicycleValidationSchema.parseAsync(data);
     const result: TBicycle = await Bicycle.create(zodParsedData);
     return result;
 };

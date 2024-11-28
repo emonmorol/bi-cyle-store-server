@@ -11,12 +11,13 @@ const createBicycle = async (
         const data: TBicycle = req.body;
 
         const result = await userService.createBicycle(data);
-
-        res.status(200).json({
-            message: 'Bicycle created successfully',
-            success: true,
-            data: result,
-        });
+        if (result) {
+            res.status(200).json({
+                message: 'Bicycle created successfully',
+                success: true,
+                data: result,
+            });
+        }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         next(error);
