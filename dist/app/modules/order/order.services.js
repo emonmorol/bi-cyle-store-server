@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderServices = void 0;
+const utils_error_1 = require("../../utils/errors/utils.error");
 const bicycle_model_1 = __importDefault(require("../bicycle/bicycle.model"));
 const order_model_1 = __importDefault(require("./order.model"));
 const order_zod_validation_1 = __importDefault(require("./order.zod.validation"));
@@ -20,12 +21,12 @@ const createOrder = (order) => __awaiter(void 0, void 0, void 0, function* () {
     const validOrder = yield order_zod_validation_1.default.parseAsync(order);
     const bicycle = yield bicycle_model_1.default.findById(validOrder.product);
     if (!bicycle) {
-        throw new Error('Product Is not available');
+        throw new utils_error_1.CustomError(`Bicycle does not exists`, 'Invalid Product Id', 500, validOrder);
     }
     const { quantity: orderQuantity } = validOrder;
     const { quantity: bicycleQuantity } = bicycle;
     if (orderQuantity > bicycleQuantity) {
-        throw new Error(`Insufficient quantity. Available product: ${bicycleQuantity}`);
+        throw new utils_error_1.CustomError(`Insufficient quantity. Available product: ${bicycleQuantity}`, 'Invalid Quantity', 500, { orderQuantity, bicycleQuantity });
     }
     bicycle.quantity = bicycleQuantity - orderQuantity;
     if (orderQuantity === bicycleQuantity) {
@@ -33,42 +34,47 @@ const createOrder = (order) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const updatedBicycle = yield bicycle.save();
     if (!updatedBicycle) {
-        throw new Error(`Order Failed , Try Again`);
+        throw new utils_error_1.CustomError(`Order Failed , Try Again`, 'Unexpected Error', 500, { orderQuantity, bicycleQuantity });
     }
     const result = yield order_model_1.default.create(validOrder);
     return result;
 });
 const calculateRevenue = () => __awaiter(void 0, void 0, void 0, function* () {
-    const revenue = yield order_model_1.default.aggregate([
-        {
-            $lookup: {
-                from: 'bicycles',
-                localField: 'product',
-                foreignField: '_id',
-                as: 'productDetails',
+    try {
+        const revenue = yield order_model_1.default.aggregate([
+            {
+                $lookup: {
+                    from: 'bicycles',
+                    localField: 'product',
+                    foreignField: '_id',
+                    as: 'productDetails',
+                },
             },
-        },
-        {
-            $unwind: '$productDetails',
-        },
-        {
-            $group: {
-                _id: null,
-                totalRevenue: {
-                    $sum: {
-                        $multiply: ['$quantity', '$productDetails.price'],
+            {
+                $unwind: '$productDetails',
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: {
+                        $sum: {
+                            $multiply: ['$quantity', '$productDetails.price'],
+                        },
                     },
                 },
             },
-        },
-        {
-            $project: {
-                _id: 0,
-                totalRevenue: 1,
+            {
+                $project: {
+                    _id: 0,
+                    totalRevenue: 1,
+                },
             },
-        },
-    ]);
-    return revenue[0];
+        ]);
+        return revenue[0];
+    }
+    catch (error) {
+        throw new utils_error_1.CustomError('Failed To calculated the revenue. Try Again!', 'Unexpected Error', 500, error);
+    }
 });
 exports.orderServices = {
     createOrder,

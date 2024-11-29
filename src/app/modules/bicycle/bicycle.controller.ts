@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { userService } from './bicycle.services';
 import { TBicycle } from './bicycle.interface';
+import { CustomError } from '../../utils/errors/utils.error';
 
 const createBicycle = async (
     req: Request,
@@ -17,9 +18,15 @@ const createBicycle = async (
                 success: true,
                 data: result,
             });
+        } else {
+            throw new CustomError(
+                'Failed To create bicycle',
+                'Unknown Error occurred',
+                404,
+                data,
+            );
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
         next(error);
     }
 };
@@ -27,14 +34,21 @@ const createBicycle = async (
 const getBicycles = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await userService.getBicycles(req);
-
-        res.status(200).json({
-            message: 'Bicycle retrieved successfully',
-            success: true,
-            data: result,
-        });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+        if (result) {
+            res.status(200).json({
+                message: 'Bicycle retrieved successfully',
+                success: true,
+                data: result,
+            });
+        } else {
+            throw new CustomError(
+                'Data Not Found!',
+                'Invalid Input',
+                404,
+                result,
+            );
+        }
+    } catch (error) {
         next(error);
     }
 };
@@ -48,11 +62,20 @@ const getBicycleById = async (
         const { productId } = req.params;
         const result = await userService.getBicyclesById(productId);
 
-        res.status(200).json({
-            message: 'Bicycle retrieved successfully',
-            success: true,
-            data: result,
-        });
+        if (result) {
+            res.status(200).json({
+                message: 'Bicycle retrieved successfully',
+                success: true,
+                data: result,
+            });
+        } else {
+            throw new CustomError(
+                'Product Not Found!',
+                'Invalid Id',
+                404,
+                productId,
+            );
+        }
     } catch (error) {
         next(error);
     }
@@ -79,10 +102,14 @@ const updateBicycleById = async (
                 data: result,
             });
         } else {
-            throw new Error('Product Not Found!');
+            throw new CustomError(
+                'Product Not Found!',
+                'Invalid Id',
+                404,
+                productId,
+            );
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
         next(error);
     }
 };
@@ -104,10 +131,14 @@ const deleteBicycleById = async (
                 data: result,
             });
         } else {
-            throw new Error('Product Not Found!');
+            throw new CustomError(
+                'Product Not Found!',
+                'Invalid Id',
+                404,
+                productId,
+            );
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
         next(error);
     }
 };

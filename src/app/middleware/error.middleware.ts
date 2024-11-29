@@ -5,15 +5,25 @@ const errorHandler = (
     error: any,
     req: Request,
     res: Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     next: NextFunction,
 ) => {
-    res.status(error.statusCode || 500).json({
-        message: error.name || 'Something went wrong',
+    const statusCode = error.statusCode || 500;
+
+    // Structure the response
+    const response = {
+        message:
+            error.name === 'ZodError'
+                ? 'Given Data Is Invalid'
+                : typeof error.message === 'string'
+                  ? error.message
+                  : error.name,
         success: false,
-        error,
-        stack: process.env.NODE_ENV === 'production' ? null : error.stack,
-    });
-    next();
+        error: error,
+        stack: process.env.NODE_ENV === 'production' ? undefined : error.stack,
+    };
+
+    res.status(statusCode).json(response);
 };
 
 export default errorHandler;

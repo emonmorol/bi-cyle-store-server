@@ -1,3 +1,4 @@
+import { CustomError } from '../../utils/errors/utils.error';
 import Bicycle from '../bicycle/bicycle.model';
 
 import { TOrder, TRevenue } from './order.interface';
@@ -9,15 +10,23 @@ const createOrder = async (order: TOrder): Promise<TOrder | null> => {
 
     const bicycle = await Bicycle.findById(validOrder.product);
     if (!bicycle) {
-        throw new Error('Product Is not available');
+        throw new CustomError(
+            `Bicycle does not exists`,
+            'Invalid Product Id',
+            500,
+            validOrder,
+        );
     }
 
     const { quantity: orderQuantity } = validOrder;
     const { quantity: bicycleQuantity } = bicycle;
 
     if (orderQuantity > bicycleQuantity) {
-        throw new Error(
+        throw new CustomError(
             `Insufficient quantity. Available product: ${bicycleQuantity}`,
+            'Invalid Quantity',
+            500,
+            { orderQuantity, bicycleQuantity },
         );
     }
 
@@ -29,7 +38,12 @@ const createOrder = async (order: TOrder): Promise<TOrder | null> => {
 
     const updatedBicycle = await bicycle.save();
     if (!updatedBicycle) {
-        throw new Error(`Order Failed , Try Again`);
+        throw new CustomError(
+            `Order Failed , Try Again`,
+            'Unexpected Error',
+            500,
+            { orderQuantity, bicycleQuantity },
+        );
     }
 
     const result: TOrder = await Order.create(validOrder);
@@ -38,37 +52,46 @@ const createOrder = async (order: TOrder): Promise<TOrder | null> => {
 };
 
 const calculateRevenue = async (): Promise<TRevenue> => {
-    const revenue = await Order.aggregate([
-        {
-            $lookup: {
-                from: 'bicycles',
-                localField: 'product',
-                foreignField: '_id',
-                as: 'productDetails',
+    try {
+        const revenue = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'bicycles',
+                    localField: 'product',
+                    foreignField: '_id',
+                    as: 'productDetails',
+                },
             },
-        },
-        {
-            $unwind: '$productDetails',
-        },
-        {
-            $group: {
-                _id: null,
-                totalRevenue: {
-                    $sum: {
-                        $multiply: ['$quantity', '$productDetails.price'],
+            {
+                $unwind: '$productDetails',
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: {
+                        $sum: {
+                            $multiply: ['$quantity', '$productDetails.price'],
+                        },
                     },
                 },
             },
-        },
-        {
-            $project: {
-                _id: 0,
-                totalRevenue: 1,
+            {
+                $project: {
+                    _id: 0,
+                    totalRevenue: 1,
+                },
             },
-        },
-    ]);
+        ]);
 
-    return revenue[0] as TRevenue;
+        return revenue[0] as TRevenue;
+    } catch (error) {
+        throw new CustomError(
+            'Failed To calculated the revenue. Try Again!',
+            'Unexpected Error',
+            500,
+            error,
+        );
+    }
 };
 
 export const orderServices = {

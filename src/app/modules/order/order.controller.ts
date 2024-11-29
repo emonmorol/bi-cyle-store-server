@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { orderServices } from './order.services';
+import { CustomError } from '../../utils/errors/utils.error';
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -11,6 +12,13 @@ const createOrder = async (req: Request, res: Response, next: NextFunction) => {
                 success: true,
                 data: result,
             });
+        } else {
+            throw new CustomError(
+                `Order Failed , Try Again`,
+                'Unexpected Error',
+                500,
+                order,
+            );
         }
     } catch (error) {
         next(error);
@@ -31,6 +39,13 @@ const calculateRevenue = async (
                 success: true,
                 data: result,
             });
+        } else {
+            throw new CustomError(
+                `Failed To Calculate Revenue`,
+                'Unexpected Error',
+                500,
+                result,
+            );
         }
     } catch (error) {
         next(error);

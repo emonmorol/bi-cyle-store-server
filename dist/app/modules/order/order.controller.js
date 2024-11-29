@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderController = void 0;
 const order_services_1 = require("./order.services");
+const utils_error_1 = require("../../utils/errors/utils.error");
 const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = req.body;
@@ -21,6 +22,9 @@ const createOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 success: true,
                 data: result,
             });
+        }
+        else {
+            throw new utils_error_1.CustomError(`Order Failed , Try Again`, 'Unexpected Error', 500, order);
         }
     }
     catch (error) {
@@ -36,6 +40,9 @@ const calculateRevenue = (req, res, next) => __awaiter(void 0, void 0, void 0, f
                 success: true,
                 data: result,
             });
+        }
+        else {
+            throw new utils_error_1.CustomError(`Failed To Calculate Revenue`, 'Unexpected Error', 500, result);
         }
     }
     catch (error) {
