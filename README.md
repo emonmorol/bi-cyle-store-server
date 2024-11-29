@@ -4,6 +4,12 @@ This server is an Express-typescript-mongodb-mongoose project. It is a backend m
 
 ---
 
+## Live LInks
+
+-   Live server -> [Bicycle Store Live Server](https://bicycle-store-server-nine.vercel.app/)
+-   Github Link -> [Bicycle Store Github Link](https://github.com/emonmorol/bi-cyle-store-server)
+-   Explanation Video Link -> [Project Video](https://drive.google.com/file/d/1UDuhvJUqGDrL1Z89EWH0q7jDar4mSysc/view?usp=sharing)
+
 ## Features
 
 -   **Bicycle Management**
@@ -59,7 +65,7 @@ This server is an Express-typescript-mongodb-mongoose project. It is a backend m
             "inStock": true
         }
         ```
-        - **Response**: Returns success message and created bicycle details.
+    - **Response**: Returns success message and created bicycle details.
         ```json
         {
             "message": "Bicycle created successfully",
@@ -311,7 +317,7 @@ Example Error Response:
 1. Navigate to the project directory:
 
     ```bash
-    cd bicycle-store-api
+    cd bi-cycle-store-server
 
     ```
 
